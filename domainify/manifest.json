@@ -2,17 +2,27 @@
     "manifest_version": 2,
     "name": "Domainify",
     "version": "1.0",
-    
     "description": "Various shortcuts to modify the current URL",
-    
+
+    "permissions": ["storage"],
+
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
             "js": ["main.js"],
             "run_at": "document_start"
         }
-        
     ],
+
+    "browser_action": {
+        "default_icon": "icons/globe.png",
+        "default_title": "Domainify"
+    },
+
+    "options_ui": {
+      "page": "options/options.html",
+      "browser_style": true
+    },
     
     "background": {
         "scripts": ["background.js"]
@@ -25,9 +35,13 @@
     },
     
     "commands": {
-        "get-url": {
-            "suggested_key": { "default": "Ctrl+Shift+U" },
-            "description": "Send a 'toggle-feature' event to the extension"
+        "go-to-root": {
+            "suggested_key": { "default": "Alt+Shift+Left" },
+            "description": "Go to URL root"
+        },
+        "go-up": {
+            "suggested_key": { "default": "Alt+Shift+Up" },
+            "description": "Go to parent subpath"
         }
     }
 }
