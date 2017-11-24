@@ -1,3 +1,5 @@
+browser.runtime.sendMessage({message: "reset-state"});
+
 browser.runtime.onMessage.addListener(function(message) {
     if(message.message == "get-url") {
         let url = window.location.href;
@@ -13,5 +15,14 @@ browser.runtime.onMessage.addListener(function(message) {
             protocol: protocol,
             port: port
         });
+    }
+
+    if(message.message == "set-url") {
+        console.log("new state: "+message.newState);
+        if(message.newState == true) {
+            window.history.pushState('', '', message.url);
+        }
+
+        window.history.replaceState('', '', message.url);
     }
 });

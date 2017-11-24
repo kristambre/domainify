@@ -6,21 +6,25 @@
   </head>
 
 <body>
-  <h2>Shortcuts</h2>
-  <table style="border: none;">
-    <colgroup>
-      <col width="10%"/>
-      <col width="90%"/>
-    </colgroup>
-    <tr>
-      <td>
-        Go to root:
-      </td>
-      <td>
-        <input id="go_to_root"/>
-      </td>
-    </tr>
-  </table>
+  <form id="options_form">
+    <table style="border: none;">
+      <colgroup>
+        <col width="25%"/>
+        <col width="50%"/>
+        <col width="25%"/>
+      </colgroup>
+      <tr>
+        <td>
+          Immediately go to new URL:
+        </td>
+        <td>
+          <input type="checkbox" id="auto_enter"/>
+        </td>
+      </tr>
+    </table>
+    <button type="submit">Save</button>
+  </form>
+  <div id="message"></div>
   <script src="options.js"></script>
 </body>
 

@@ -15,6 +15,7 @@
     ],
 
     "browser_action": {
+        "browser_style": true,
         "default_icon": "icons/globe.png",
         "default_title": "Domainify"
     },
@@ -42,6 +43,10 @@
         "go-up": {
             "suggested_key": { "default": "Alt+Shift+Up" },
             "description": "Go to parent subpath"
+        },
+        "go-to-current": {
+            "suggested_key": { "default": "Alt+Shift+Down" },
+            "description": "When \"Immediately go to new URL\" is unchecked, use this to go to the selected url"
         }
     }
 }
