@@ -16,14 +16,20 @@ function parseHost(host) {
 }
 
 function parsePath(path) {
-    if(path.endsWith("/")) {
-        path = path.substr(0, path.length - 1);
+    if(path == ["/"]) {
+        return [];
     }
 
-    path = path.substr(1).split("/");
-    path[0] = "/".concat(path[0]);
+    let parsedPath = null;
 
-    return path;
+    if(path.endsWith("/")) {
+        parsedPath = path.substr(0, path.length - 1);
+    }
+
+    parsedPath = parsedPath === null ? path.substr(1).split("/") : parsedPath.substr(1).split("/");
+    parsedPath[0] = "/".concat(parsedPath[0]);
+
+    return parsedPath;
 }
 
 browser.commands.onCommand.addListener(function(command) {
@@ -41,25 +47,45 @@ browser.commands.onCommand.addListener(function(command) {
 });
 
 let pushNewState = true;
+let path = null;
 
 function updateTab(urlData, command, tab) {
     let forced = false;
     let parsedURL = urlData.protocol // appends ':' by default
-                    + parseHost(urlData.host) // prepends '//'
-                    + parsePort(urlData.port); // prepends ':' if port is visible;
+            .concat(parseHost(urlData.host)) // prepends '//'
+            .concat(parsePort(urlData.port)); // prepends ':' if port is visible;
+
+    let currentPath = parsePath(urlData.path);
+
+    if (path === null) {
+        path = parsePath(urlData.path);
+    }
 
     switch (command) {
         case "go-to-root":
             //default behaviour
             break;
         case "go-up":
-            let parsedPathArray = parsePath(urlData.path);
+            if (currentPath.length == 0) {
+                break;
+            }
 
-            for (let i = 0; i < parsedPathArray.length - 1; i++) {
-                let path = parsedPathArray[i];
+            for (let i = 0; i < currentPath.length - 1; i++) {
+                parsedURL = parsedURL.concat(currentPath[i]).concat("/");
+            }
 
-                parsedURL = parsedURL.concat(path).concat("/");
-                console.log(parsedURL);
+            break;
+        case "go-down":
+            let length = currentPath.length + 1;
+
+            if (length > path.length) {
+                length = path.length;
+            }
+
+            for (let i = 0; i < path.length; i++) {
+                if(i < length) {
+                    parsedURL = parsedURL.concat(path[i]).concat("/");
+                }
             }
 
             break;
@@ -88,6 +114,7 @@ browser.runtime.onMessage.addListener(function(message) {
 
     if (message.message == "reset-state") {
         pushNewState = true;
+        path = null;
     }
 });
 

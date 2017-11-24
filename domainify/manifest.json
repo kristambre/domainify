@@ -37,12 +37,16 @@
     
     "commands": {
         "go-to-root": {
-            "suggested_key": { "default": "Alt+Shift+Left" },
+            "suggested_key": { "default": "Alt+Shift+Up" },
             "description": "Go to URL root"
         },
         "go-up": {
-            "suggested_key": { "default": "Alt+Shift+Up" },
+            "suggested_key": { "default": "Alt+Shift+Left" },
             "description": "Go to parent subpath"
+        },
+        "go-down": {
+            "suggested_key": { "default": "Alt+Shift+Right" },
+            "description": "Go to child subpath"
         },
         "go-to-current": {
             "suggested_key": { "default": "Alt+Shift+Down" },
