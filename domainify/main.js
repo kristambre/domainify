@@ -18,7 +18,6 @@ browser.runtime.onMessage.addListener(function(message) {
     }
 
     if(message.message == "set-url") {
-        console.log("new state: "+message.newState);
         if(message.newState == true) {
             window.history.pushState('', '', message.url);
         }

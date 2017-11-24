@@ -23,7 +23,6 @@ function parsePath(path) {
     path = path.substr(1).split("/");
     path[0] = "/".concat(path[0]);
 
-    console.log(path);
     return path;
 }
 
@@ -71,7 +70,6 @@ function updateTab(urlData, command, tab) {
     }
 
     if(autoEnter == true || forced == true) {
-        console.log("parsedURL:" +parsedURL);
         browser.tabs.update({url: parsedURL});
     } else {
         browser.tabs.sendMessage(tab.id, {message: "set-url", url: parsedURL, newState: pushNewState});
