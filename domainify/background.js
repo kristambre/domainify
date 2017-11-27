@@ -113,10 +113,18 @@ browser.runtime.onMessage.addListener(function(message) {
     }
 
     if (message.message == "reset-state") {
-        pushNewState = true;
-        path = null;
+        resetState();
     }
 });
+
+browser.tabs.onActivated.addListener(function() {
+    resetState();
+});
+
+function resetState() {
+    pushNewState = true;
+    path = null;
+}
 
 if(!options) {
     updateOptions();

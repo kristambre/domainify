@@ -25,3 +25,4 @@ browser.runtime.onMessage.addListener(function(message) {
         window.history.replaceState('', '', message.url);
     }
 });
+
