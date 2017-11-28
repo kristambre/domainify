@@ -28,6 +28,7 @@
     "background": {
         "scripts": [
             "domainify/background/state.js",
+            "domainify/background/path.js",
             "domainify/background/parser.js",
             "domainify/background/other.js"
         ]

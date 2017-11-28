@@ -20,33 +20,14 @@ function parseHost(host) {
     return "//"+host;
 }
 
-function parsePath(path) {
-    if(path == ["/"]) {
-        return [];
-    }
-
-    let parsedPath = null;
-
-    if(path.endsWith("/")) {
-        parsedPath = path.substr(0, path.length - 1);
-    }
-
-    parsedPath = parsedPath === null ? path.substr(1).split("/") : parsedPath.substr(1).split("/");
-    parsedPath[0] = "/".concat(parsedPath[0]);
-
-    return parsedPath;
-}
-
 function updateTab(urlData, command, tab) {
     let forced = false;
     let parsedURL = urlData.protocol // appends ':' by default
             .concat(parseHost(urlData.host)) // prepends '//'
             .concat(parsePort(urlData.port)); // prepends ':' if port is visible;
 
-    let currentPath = parsePath(urlData.path);
-
-    if (path === null) {
-        path = parsePath(urlData.path);
+    if(path == null) {
+        path = new Path(urlData.path, "/", null);
     }
 
     switch (command) {
@@ -54,28 +35,12 @@ function updateTab(urlData, command, tab) {
             //default behaviour
             break;
         case "go-up":
-            if (currentPath.length == 0) {
-                break;
-            }
-
-            for (let i = 0; i < currentPath.length - 1; i++) {
-                parsedURL = parsedURL.concat(currentPath[i]).concat("/");
-            }
-
+            parsedURL = parsedURL.concat(path.up.getString());
+            path = path.up;
             break;
         case "go-down":
-            let length = currentPath.length + 1;
-
-            if (length > path.length) {
-                length = path.length;
-            }
-
-            for (let i = 0; i < path.length; i++) {
-                if(i < length) {
-                    parsedURL = parsedURL.concat(path[i]).concat("/");
-                }
-            }
-
+            parsedURL = parsedURL.concat(path.down.getString());
+            path = path.down;
             break;
         case "go-to-current":
             parsedURL = urlData.url;
