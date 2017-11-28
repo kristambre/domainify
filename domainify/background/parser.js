@@ -35,11 +35,11 @@ function updateTab(urlData, command, tab) {
             //default behaviour
             break;
         case "go-up":
-            parsedURL = parsedURL.concat(path.up.getString());
+            parsedURL = parsedURL.concat(path.up.value);
             path = path.up;
             break;
         case "go-down":
-            parsedURL = parsedURL.concat(path.down.getString());
+            parsedURL = parsedURL.concat(path.down.value);
             path = path.down;
             break;
         case "go-to-current":
