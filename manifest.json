@@ -9,7 +9,7 @@
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
-            "js": ["main.js"],
+            "js": ["domainify/front.js"],
             "run_at": "document_start"
         }
     ],
@@ -26,7 +26,11 @@
     },
     
     "background": {
-        "scripts": ["background.js"]
+        "scripts": [
+            "domainify/background/state.js",
+            "domainify/background/parser.js",
+            "domainify/background/other.js"
+        ]
     },
     
     "applications": {

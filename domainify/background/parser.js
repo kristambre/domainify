@@ -1,11 +1,16 @@
-let options;
-let autoEnter = true;
+browser.commands.onCommand.addListener(function(command) {
+    let tab = browser.tabs.query({ currentWindow: true, active: true });
 
-function updateOptions() {
-    browser.storage.sync.get().then(result => {
-        autoEnter = result.auto_enter;
+    tab.then(function(tabs) {
+        for (let tab of tabs) {
+            browser.tabs
+                .sendMessage(tab.id, {message: "get-url"})
+                .then(response => {
+                    updateTab(response, command, tab);
+                });
+        }
     });
-}
+});
 
 function parsePort(port) {
     return port != '' && port != '80' && port != '443' ? ":"+port : '';
@@ -31,23 +36,6 @@ function parsePath(path) {
 
     return parsedPath;
 }
-
-browser.commands.onCommand.addListener(function(command) {
-    let tab = browser.tabs.query({ currentWindow: true, active: true });
-
-    tab.then(function(tabs) {
-                for (let tab of tabs) {
-                    browser.tabs
-                    .sendMessage(tab.id, {message: "get-url"})
-                    .then(response => {
-                        updateTab(response, command, tab);
-                    });
-                }
-            });
-});
-
-let pushNewState = true;
-let path = null;
 
 function updateTab(urlData, command, tab) {
     let forced = false;
@@ -101,31 +89,4 @@ function updateTab(urlData, command, tab) {
         browser.tabs.sendMessage(tab.id, {message: "set-url", url: parsedURL, newState: pushNewState});
         pushNewState = false;
     }
-}
-
-browser.browserAction.onClicked.addListener(function() {
-    browser.runtime.openOptionsPage();
-});
-
-browser.runtime.onMessage.addListener(function(message) {
-    if (message.message == "update-options") {
-        updateOptions();
-    }
-
-    if (message.message == "reset-state") {
-        resetState();
-    }
-});
-
-browser.tabs.onActivated.addListener(function() {
-    resetState();
-});
-
-function resetState() {
-    pushNewState = true;
-    path = null;
-}
-
-if(!options) {
-    updateOptions();
 }
