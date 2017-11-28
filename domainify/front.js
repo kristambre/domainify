@@ -20,9 +20,9 @@ browser.runtime.onMessage.addListener(function(message) {
     if(message.message == "set-url") {
         if(message.newState == true) {
             window.history.pushState('', '', message.url);
+        } else {
+            window.history.replaceState('', '', message.url);
         }
-
-        window.history.replaceState('', '', message.url);
     }
 });
 
