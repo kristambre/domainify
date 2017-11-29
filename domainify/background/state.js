@@ -4,6 +4,7 @@ let root = null;
 let tabId = null;
 let options = null;
 let autoEnter = true;
+let skipRedirect = false;
 
 browser.runtime.onMessage.addListener(function(message) {
     //options change
@@ -14,6 +15,20 @@ browser.runtime.onMessage.addListener(function(message) {
     //new url request
     if (message.message == "new-page") {
         newState(message.root, message.path);
+    }
+
+    if(message.message == "redirect-detect") {
+        let iter = path;
+        while(iter.value != iter.up.value) {
+            console.log(iter.value+" == "+message.path);
+            if(iter.value == message.path) {
+                console.log("detected, redirection: "+message.value);
+                iter.redirecting = message.value;
+                break;
+            }
+
+            iter = iter.up;
+        }
     }
 });
 
@@ -55,6 +70,7 @@ function newState(r, p) {
 function updateOptions() {
     browser.storage.sync.get().then(result => {
         autoEnter = result.auto_enter;
+        skipRedirect = result.skip_redirect;
     });
 }
 

@@ -1,6 +1,7 @@
 function save(e) {
     browser.storage.sync.set({
-        auto_enter: document.querySelector("#auto_enter").checked
+        auto_enter: document.querySelector("#auto_enter").checked,
+        skip_redirect: document.querySelector("#skip_redirect").checked
     }).then(res => {
         document.querySelector("#message").innerText = "Saved!";
     });
@@ -11,9 +12,10 @@ function save(e) {
 }
 
 function restoreOptions() {
-    let autoEnter = browser.storage.sync.get();
-    autoEnter.then(result => {
+    let options = browser.storage.sync.get();
+    options.then(result => {
         document.querySelector("#auto_enter").checked = result.auto_enter ? result.auto_enter : false;
+        document.querySelector("#skip_redirect").checked = result.skip_redirect ? result.skip_redirect : false;
     })
 }
 

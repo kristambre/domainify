@@ -15,7 +15,6 @@ function domainify(command, forced) {
 }
 
 function updateTab(command, tab, forced) {
-    replace = true;
     if(currentPath == null) {
         currentPath = Object.assign({}, path);
     }
@@ -27,6 +26,11 @@ function updateTab(command, tab, forced) {
             parsedURL = root;
             break;
         case "go-up":
+            if(skipRedirect) {
+                while(currentPath.up.value == currentPath.value || currentPath.up.redirecting) {
+                    currentPath = currentPath.up;
+                }
+            }
             parsedURL = root.concat(currentPath.up.value);
             currentPath = currentPath.up;
             break;
