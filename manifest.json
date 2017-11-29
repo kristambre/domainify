@@ -12,7 +12,11 @@
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
-            "js": ["domainify/front.js"],
+            "js": 
+            [
+                "domainify/path.js",
+                "domainify/front.js"
+            ],
             "run_at": "document_start"
         }
     ],
@@ -36,7 +40,6 @@
     "background": {
         "scripts": [
             "domainify/background/state.js",
-            "domainify/background/path.js",
             "domainify/background/parser.js",
             "domainify/background/other.js"
         ]

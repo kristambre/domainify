@@ -1,28 +1,47 @@
-browser.runtime.sendMessage({message: "reset-state"});
+let root = null;
+let path = null;
+let alreadyPushed = false;
+
+newUrl();
 
 browser.runtime.onMessage.addListener(function(message) {
-    if(message.message == "get-url") {
-        let url = window.location.href;
-        let host = window.location.hostname;
-        let path = window.location.pathname;
-        let protocol = window.location.protocol;
-        let port = window.location.port;
-
-        return Promise.resolve({
-            url: url,
-            host: host,
-            path: path,
-            protocol: protocol,
-            port: port
-        });
-    }
-
     if(message.message == "set-url") {
-        if(message.newState == true) {
+        if(message.newState == true && alreadyPushed == false) {
             window.history.pushState('', '', message.url);
+            alreadyPushed = true;
         } else {
             window.history.replaceState('', '', message.url);
         }
     }
+
+    if(message.message == "get-url-data") {
+        return Promise.resolve({
+            root: root,
+            path: path,
+            length: history.length
+        });
+    }
 });
 
+function newUrl() {
+    root =  window.location.protocol // appends ':' by default
+                .concat(parseHost(window.location.hostname)) // prepends '//'
+                .concat(parsePort(window.location.port)); // prepends ':' if port is visible;
+
+    path = new Path(window.location.pathname, "/", null);
+
+    browser.runtime.sendMessage({
+        message: "new-page",
+        root: root,
+        path: path,
+    });
+}
+
+
+function parsePort(port) {
+    return port != '' && port != '80' && port != '443' ? ":"+port : '';
+}
+
+function parseHost(host) {
+    return "//"+host;
+}

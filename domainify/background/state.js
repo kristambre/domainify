@@ -1,6 +1,8 @@
 let pushNewState = true;
 let path = null;
-let options;
+let root = null;
+let tabId = null;
+let options = null;
 let autoEnter = true;
 
 browser.runtime.onMessage.addListener(function(message) {
@@ -10,19 +12,44 @@ browser.runtime.onMessage.addListener(function(message) {
     }
 
     //new url request
-    if (message.message == "reset-state") {
-        resetState();
+    if (message.message == "new-page") {
+        newState(message.root, message.path);
     }
 });
 
 //tab switch
 browser.tabs.onActivated.addListener(function() {
-    resetState();
+    browser.tabs.sendMessage(tabId,
+    {
+        message: "set-url",
+        newState: false,
+        url: root.concat(path.value)
+    });
+
+    let currentTab = browser.tabs.query({ currentWindow: true, active: true });
+    
+    currentTab.then(function(tabs){
+        for (let tab of tabs) {
+            browser.tabs
+            .sendMessage(tab.id, {message: "get-url-data"})
+            .then(res => {
+                newState(res.root, res.path);
+            });
+        }
+    });
+
+    currentPath = null;
 });
 
-function resetState() {
+function newState(r, p) {
     pushNewState = true;
-    path = null;
+    path = p;
+    root = r;
+    browser.tabs.query({ currentWindow: true, active: true }).then(function(tabs) {
+        for (let tab of tabs) {
+            tabId = tab.id;
+        }
+    });
 }
 
 function updateOptions() {
@@ -31,6 +58,6 @@ function updateOptions() {
     });
 }
 
-if(!options) {
+if(options == null) {
     updateOptions();
 }
