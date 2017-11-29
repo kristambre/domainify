@@ -18,7 +18,7 @@ function updateTab(command, tab, forced) {
     if(currentPath == null) {
         currentPath = Object.assign({}, path);
     }
-    console.log(currentPath);
+
     let parsedURL = root.concat(currentPath.value);
 
     switch (command) {

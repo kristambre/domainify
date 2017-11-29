@@ -20,9 +20,7 @@ browser.runtime.onMessage.addListener(function(message) {
     if(message.message == "redirect-detect") {
         let iter = path;
         while(iter.value != iter.up.value) {
-            console.log(iter.value+" == "+message.path);
             if(iter.value == message.path) {
-                console.log("detected, redirection: "+message.value);
                 iter.redirecting = message.value;
                 break;
             }
