@@ -4,7 +4,10 @@
     "version": "1.0",
     "description": "Various shortcuts to modify the current URL",
 
-    "permissions": ["storage"],
+    "permissions": [
+        "storage",
+        "menus"
+    ],
 
     "content_scripts": [
         {
@@ -16,8 +19,13 @@
 
     "browser_action": {
         "browser_style": true,
-        "default_icon": "icons/globe.png",
-        "default_title": "Domainify"
+        "default_icon": "icons/up-dark.svg",
+        "theme_icons": [{
+            "light": "icons/up-light.svg",
+            "dark": "icons/up-dark.svg",
+            "size": 32
+        }],
+        "default_title": "Go up one directory"
     },
 
     "options_ui": {

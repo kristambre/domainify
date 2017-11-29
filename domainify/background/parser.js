@@ -1,4 +1,8 @@
 browser.commands.onCommand.addListener(function(command) {
+    domainify(command, false);
+});
+
+function domainify(command, forced) {
     let tab = browser.tabs.query({ currentWindow: true, active: true });
 
     tab.then(function(tabs) {
@@ -6,11 +10,11 @@ browser.commands.onCommand.addListener(function(command) {
             browser.tabs
                 .sendMessage(tab.id, {message: "get-url"})
                 .then(response => {
-                    updateTab(response, command, tab);
+                    updateTab(response, command, tab, forced);
                 });
         }
     });
-});
+}
 
 function parsePort(port) {
     return port != '' && port != '80' && port != '443' ? ":"+port : '';
@@ -20,8 +24,7 @@ function parseHost(host) {
     return "//"+host;
 }
 
-function updateTab(urlData, command, tab) {
-    let forced = false;
+function updateTab(urlData, command, tab, forced) {
     let parsedURL = urlData.protocol // appends ':' by default
             .concat(parseHost(urlData.host)) // prepends '//'
             .concat(parsePort(urlData.port)); // prepends ':' if port is visible;
