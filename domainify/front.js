@@ -6,7 +6,7 @@ newUrl();
 
 browser.runtime.onMessage.addListener(function(message) {
     if(message.message == "set-url") {
-        if(message.newState == true && alreadyPushed == false) {
+        if(!alreadyPushed) {
             window.history.pushState('', '', message.url);
             alreadyPushed = true;
         } else {
@@ -18,7 +18,6 @@ browser.runtime.onMessage.addListener(function(message) {
         return Promise.resolve({
             root: root,
             path: path,
-            length: history.length
         });
     }
 });
@@ -34,6 +33,10 @@ function newUrl() {
         message: "new-page",
         root: root,
         path: path,
+    }).then(res => {
+        if(res.skipRedirect) {
+            detectRedirection();
+        }
     });
 }
 

@@ -1,4 +1,3 @@
-let pushNewState = true;
 let path = null;
 let root = null;
 let tabId = null;
@@ -15,18 +14,14 @@ browser.runtime.onMessage.addListener(function(message) {
     //new url request
     if (message.message == "new-page") {
         newState(message.root, message.path);
+
+        return Promise.resolve({
+            skipRedirect: skipRedirect
+        })
     }
 
     if(message.message == "redirect-detect") {
-        let iter = path;
-        while(iter.value != iter.up.value) {
-            if(iter.value == message.path) {
-                iter.redirecting = message.value;
-                break;
-            }
-
-            iter = iter.up;
-        }
+        path = message.value;
     }
 });
 
@@ -35,7 +30,6 @@ browser.tabs.onActivated.addListener(function() {
     browser.tabs.sendMessage(tabId,
     {
         message: "set-url",
-        newState: false,
         url: root.concat(path.value)
     });
 
@@ -55,7 +49,6 @@ browser.tabs.onActivated.addListener(function() {
 });
 
 function newState(r, p) {
-    pushNewState = true;
     path = p;
     root = r;
     browser.tabs.query({ currentWindow: true, active: true }).then(function(tabs) {

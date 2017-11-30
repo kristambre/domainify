@@ -27,7 +27,7 @@ function updateTab(command, tab, forced) {
             break;
         case "go-up":
             if(skipRedirect) {
-                while(currentPath.up.value == currentPath.value || currentPath.up.redirecting) {
+                while(currentPath.up.value != currentPath.value && currentPath.up.redirecting) {
                     currentPath = currentPath.up;
                 }
             }
@@ -47,7 +47,6 @@ function updateTab(command, tab, forced) {
         currentPath = null;
         browser.tabs.update({url: parsedURL});
     } else {
-        browser.tabs.sendMessage(tab.id, {message: "set-url", url: parsedURL, newState: pushNewState});
-        pushNewState = false;
+        browser.tabs.sendMessage(tab.id, {message: "set-url", url: parsedURL});
     }
 }
