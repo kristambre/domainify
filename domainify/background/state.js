@@ -67,7 +67,6 @@ browser.tabs.onActivated.addListener(function() {
         }
     });
 
-    currentPath = null;
     debug("");
 });
 
@@ -75,6 +74,7 @@ function newState(r, p) {
     debug("Resetting state...");
     path = p;
     root = r;
+    currentPath = null;
     browser.tabs.query({ currentWindow: true, active: true }).then(function(tabs) {
         for (let tab of tabs) {
             debug("Current tab id: "+tab.id);
