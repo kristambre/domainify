@@ -1,11 +1,13 @@
-let paths = [];
+debug("Path loaded.");
+
+let paths = new Map();
 
 function Path(path, splitter, next) {
     path = removeLastCharacterIfNeeded(splitter, path);
     this.value = path;
-    this.redirecting = false;
 
-    paths.push(this);
+    paths.set(this.value, false);
+    debug(path);
 
     this.up = path.length > 0 ? new Path(path.substr(0, path.lastIndexOf(splitter)), splitter, this) : this;
     this.down = next == null ? this : next;
@@ -13,20 +15,23 @@ function Path(path, splitter, next) {
 
 function detectRedirection() {
     let responsesGotten = 0;
+    debug("Detecting redirection...");
 
-    for (let p of paths) {
-        let url = root.concat(p.value);
+    for (let [p, value] of paths) {
+        let url = root.concat(p);
         let xhr = new XMLHttpRequest();
 
         xhr.onreadystatechange = function() {
             if(xhr.readyState == 4) {
-                p.redirecting = (url != removeLastCharacterIfNeeded("/", xhr.responseURL));
+                paths.set(p, (url != removeLastCharacterIfNeeded("/", xhr.responseURL)));
+                debug("Path: "+p+", redirecting: "+paths.get(p));
                 responsesGotten++;
 
-                if(responsesGotten == paths.length) {
+                if(responsesGotten == paths.size) {
+                    debug("All paths detected.");
                     browser.runtime.sendMessage({
                         message: "redirect-detect",
-                        value: path
+                        value: paths
                     });
                 }
             }

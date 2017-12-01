@@ -1,4 +1,7 @@
+debug("Other loaded.");
+
 browser.browserAction.onClicked.addListener(function() {
+    debug("Button clicked");
     domainify("go-up", true);
 });
 

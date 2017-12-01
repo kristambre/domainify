@@ -6,6 +6,7 @@ newUrl();
 
 browser.runtime.onMessage.addListener(function(message) {
     if(message.message == "set-url") {
+        debug("Setting url...");
         if(!alreadyPushed) {
             window.history.pushState('', '', message.url);
             alreadyPushed = true;
@@ -15,6 +16,7 @@ browser.runtime.onMessage.addListener(function(message) {
     }
 
     if(message.message == "get-url-data") {
+        debug("Getting url data...");
         return Promise.resolve({
             root: root,
             path: path,
@@ -27,13 +29,17 @@ function newUrl() {
                 .concat(parseHost(window.location.hostname)) // prepends '//'
                 .concat(parsePort(window.location.port)); // prepends ':' if port is visible;
 
+    debug("Root: "+root);
+    debug("Parsing paths...");
     path = new Path(window.location.pathname, "/", null);
 
+    debug("Sending new page...");
     browser.runtime.sendMessage({
         message: "new-page",
         root: root,
         path: path,
     }).then(res => {
+        debug("Skip redirects: "+res.skipRedirect);
         if(res.skipRedirect) {
             detectRedirection();
         }
@@ -47,4 +53,8 @@ function parsePort(port) {
 
 function parseHost(host) {
     return "//"+host;
+}
+
+function debug(msg) {
+    console.log(msg);
 }

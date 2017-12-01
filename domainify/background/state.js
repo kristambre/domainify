@@ -2,17 +2,29 @@ let path = null;
 let root = null;
 let tabId = null;
 let options = null;
+
+let redirects = null;
+
 let autoEnter = true;
 let skipRedirect = false;
+let deb = false;
+
+debug("State loaded.");
 
 browser.runtime.onMessage.addListener(function(message) {
+    debug("");
+    debug("================STATE================");
+    debug("Got: ");
+    debug(message);
     //options change
     if (message.message == "update-options") {
+        debug("Refreshing options...");
         updateOptions();
     }
 
     //new url request
     if (message.message == "new-page") {
+        debug("Initializing for new page...");
         newState(message.root, message.path);
 
         return Promise.resolve({
@@ -21,18 +33,26 @@ browser.runtime.onMessage.addListener(function(message) {
     }
 
     if(message.message == "redirect-detect") {
-        path = message.value;
+        debug("Setting redirect values...");
+        redirects = message.value;
     }
+
+    debug("");
 });
 
 //tab switch
 browser.tabs.onActivated.addListener(function() {
+    debug("");
+    debug("================STATE================");
+    debug("Tab switched");
+    debug("Resetting old tab back to original value...");
     browser.tabs.sendMessage(tabId,
     {
         message: "set-url",
         url: root.concat(path.value)
     });
 
+    debug("Getting current tab...");
     let currentTab = browser.tabs.query({ currentWindow: true, active: true });
     
     currentTab.then(function(tabs){
@@ -40,19 +60,24 @@ browser.tabs.onActivated.addListener(function() {
             browser.tabs
             .sendMessage(tab.id, {message: "get-url-data"})
             .then(res => {
+                debug("Current tab url data: ");
+                debug(res);
                 newState(res.root, res.path);
             });
         }
     });
 
     currentPath = null;
+    debug("");
 });
 
 function newState(r, p) {
+    debug("Resetting state...");
     path = p;
     root = r;
     browser.tabs.query({ currentWindow: true, active: true }).then(function(tabs) {
         for (let tab of tabs) {
+            debug("Current tab id: "+tab.id);
             tabId = tab.id;
         }
     });
@@ -60,9 +85,19 @@ function newState(r, p) {
 
 function updateOptions() {
     browser.storage.sync.get().then(result => {
+        debug("Got options from storage: ");
+        debug(result);
+
         autoEnter = result.auto_enter;
         skipRedirect = result.skip_redirect;
+        deb = result.debug;
     });
+}
+
+function debug(msg) {
+    if(deb) {
+        console.log(msg);
+    }
 }
 
 if(options == null) {

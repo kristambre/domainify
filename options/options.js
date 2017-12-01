@@ -1,12 +1,12 @@
 function save(e) {
     browser.storage.sync.set({
         auto_enter: document.querySelector("#auto_enter").checked,
-        skip_redirect: document.querySelector("#skip_redirect").checked
+        skip_redirect: document.querySelector("#skip_redirect").checked,
+        debug: document.querySelector("#debug").checked
     }).then(res => {
         document.querySelector("#message").innerText = "Saved!";
+        browser.runtime.sendMessage({message: "update-options"});
     });
-
-    browser.runtime.sendMessage({message: "update-options"});
 
     e.preventDefault();
 }
@@ -16,6 +16,7 @@ function restoreOptions() {
     options.then(result => {
         document.querySelector("#auto_enter").checked = result.auto_enter ? result.auto_enter : false;
         document.querySelector("#skip_redirect").checked = result.skip_redirect ? result.skip_redirect : false;
+        document.querySelector("#debug").checked = result.debug ? result.debug : false;
     })
 }
 
