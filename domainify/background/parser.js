@@ -26,7 +26,7 @@ function updateTab(command, tab, forced) {
     debug("Updating tab with data: ");
     debug({command: command, tab: tab, forced: forced, currentPath: currentPath});
 
-    if(!currentPath) {
+    if(currentPath == null) {
         debug("Current path not assigned, cloning from original...");
         currentPath = Object.assign({}, path);
         debug(currentPath);
