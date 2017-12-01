@@ -1,5 +1,3 @@
-debug("Path loaded.");
-
 let paths = new Map();
 let splitter = "/";
 
@@ -17,7 +15,6 @@ let splitter = "/";
 //for this reason, we check the current length. if it's empty, we are at the root
 //you cannot go "up" from the root, so we set the root's "up" as the root itself
 function Path(path) {
-    debug(path);
     path = removeLastCharacterIfNeeded(splitter, path);
     this.value = path;
     this.down = this;
@@ -32,7 +29,6 @@ function Path(path) {
 
 function detectRedirection() {
     let responsesGotten = 0;
-    debug("Detecting redirection...");
 
     for (let [p, value] of paths) {
         let url = root.concat(p);
@@ -41,11 +37,9 @@ function detectRedirection() {
         xhr.onreadystatechange = function() {
             if(xhr.readyState == 4) {
                 paths.set(p, url != removeLastCharacterIfNeeded(splitter, xhr.responseURL) || xhr.status != 200);
-                debug("Path: "+p+", redirecting: "+paths.get(p));
                 responsesGotten++;
 
                 if(responsesGotten == paths.size) {
-                    debug("All paths detected.");
                     browser.runtime.sendMessage({
                         message: "redirect-detect",
                         value: paths
