@@ -25,13 +25,14 @@ browser.runtime.onMessage.addListener(function(message) {
 });
 
 function newUrl() {
-    root =  window.location.protocol // appends ':' by default
-                .concat(parseHost(window.location.hostname)) // prepends '//'
-                .concat(parsePort(window.location.port)); // prepends ':' if port is visible;
+    root =  window.location.origin;
 
+    debug(window.location);
     debug("Root: "+root);
     debug("Parsing paths...");
-    path = new Path(window.location.pathname, "/", null);
+    path = new Path(window.location.pathname);
+    path.params = window.location.search;
+    debug(path);
 
     debug("Sending new page...");
     browser.runtime.sendMessage({
@@ -44,15 +45,6 @@ function newUrl() {
             detectRedirection();
         }
     });
-}
-
-
-function parsePort(port) {
-    return port != '' && port != '80' && port != '443' ? ":"+port : '';
-}
-
-function parseHost(host) {
-    return "//"+host;
 }
 
 function debug(msg) {

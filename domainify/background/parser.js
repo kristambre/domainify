@@ -69,6 +69,12 @@ function updateTab(command, tab, forced) {
             break;
         case "go-down":
             parsedURL = root.concat(currentPath.down.value);
+
+            if(currentPath.value == currentPath.down.value) {
+                debug("Adding params");
+                parsedURL = parsedURL.concat(currentPath.params);
+            }
+
             currentPath = currentPath.down;
 
             debug("Path to go to:");

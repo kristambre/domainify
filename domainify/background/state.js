@@ -49,7 +49,7 @@ browser.tabs.onActivated.addListener(function() {
     browser.tabs.sendMessage(tabId,
     {
         message: "set-url",
-        url: root.concat(path.value)
+        url: root.concat(path.value).concat(path.params)
     });
 
     debug("Getting current tab...");
