@@ -41,34 +41,39 @@ browser.runtime.onMessage.addListener(function(message) {
 });
 
 //tab switch
-browser.tabs.onActivated.addListener(function() {
+browser.tabs.onActivated.addListener(handleSwitching);
+
+//window switch
+browser.windows.onFocusChanged.addListener(handleSwitching);
+
+function handleSwitching() {
     debug("");
     debug("================STATE================");
-    debug("Tab switched");
+    debug("Tab/window switched");
     debug("Resetting old tab back to original value...");
     browser.tabs.sendMessage(tabId,
-    {
-        message: "set-url",
-        url: root.concat(path.value).concat(path.params)
-    });
+        {
+            message: "set-url",
+            url: root.concat(path.value).concat(path.params)
+        });
 
     debug("Getting current tab...");
     let currentTab = browser.tabs.query({ currentWindow: true, active: true });
-    
+
     currentTab.then(function(tabs){
         for (let tab of tabs) {
             browser.tabs
-            .sendMessage(tab.id, {message: "get-url-data"})
-            .then(res => {
-                debug("Current tab url data: ");
-                debug(res);
-                newState(res.root, res.path);
-            });
+                .sendMessage(tab.id, {message: "get-url-data"})
+                .then(res => {
+                    debug("Current tab url data: ");
+                    debug(res);
+                    newState(res.root, res.path);
+                });
         }
     });
 
     debug("");
-});
+}
 
 function newState(r, p) {
     debug("Resetting state...");
